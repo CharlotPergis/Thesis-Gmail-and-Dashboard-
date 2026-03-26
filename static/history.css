@@ -1,0 +1,383 @@
+/* ----------------------------
+   Full History Page - Enhanced with CSV Download
+---------------------------- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  background: #0f172a;
+  color: #f1f5f9;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Dashboard Container */
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  width: 95%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  gap: 16px;
+  overflow: hidden;
+}
+
+/* HEADER */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 12px;
+  flex-shrink: 0;
+}
+
+.history-header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  margin: 0;
+  background: linear-gradient(135deg, #e0f2fe 0%, #a5f3fc 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+}
+
+.subtext {
+  font-size: 13px;
+  color: #94a3b8;
+  margin-top: 4px;
+}
+
+.btn-back {
+  background: #ef4444;
+  color: white;
+  text-decoration: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn-back:hover {
+  background: #dc2626;
+  transform: scale(0.97);
+}
+
+/* Enhanced Filter Section */
+.filter-section {
+  background: #1e293b;
+  border-radius: 20px;
+  padding: 20px;
+  flex-shrink: 0;
+  border: 1px solid #334155;
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+  margin-bottom: 15px;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 140px;
+}
+
+.filter-group label {
+  font-size: 12px;
+  font-weight: 500;
+  color: #94a3b8;
+  margin-bottom: 4px;
+}
+
+.filter-group input,
+.filter-group select {
+  background: #0f172a;
+  border: 1px solid #334155;
+  color: #e2e8f0;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+
+.filter-group input:focus,
+.filter-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Buttons */
+button {
+  border: none;
+  padding: 8px 18px;
+  border-radius: 40px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn:hover {
+  background: #2563eb;
+  transform: translateY(-1px);
+}
+
+.btn-secondary {
+  background: #334155;
+  color: #e2e8f0;
+}
+
+.btn-secondary:hover {
+  background: #475569;
+  transform: translateY(-1px);
+}
+
+.btn-download {
+  background: #22c55e;
+  color: white;
+}
+
+.btn-download:hover {
+  background: #16a34a;
+  transform: translateY(-1px);
+}
+
+.btn-small {
+  padding: 4px 12px;
+  font-size: 12px;
+}
+
+.badge {
+  background: #0f172a;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 12px;
+  color: #94a3b8;
+}
+
+/* Quick filters */
+.quick-filters-enhanced {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 15px;
+  align-items: center;
+}
+
+/* Stats Bar */
+.stats-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 1px solid #334155;
+}
+
+.stats-left, .stats-right {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+
+.stat-item {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+  color: #94a3b8;
+}
+
+.stat-value {
+  color: #3b82f6;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* TABLE WRAPPER */
+.table-wrap {
+  flex: 1;
+  overflow-y: auto;
+  border-radius: 20px;
+  border: 1px solid #1e293b;
+  background: #020617;
+}
+
+/* Table styles */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+  min-width: 580px;
+}
+
+th, td {
+  padding: 12px 16px;
+  text-align: left;
+  border-bottom: 1px solid #1e2a3e;
+}
+
+th {
+  background: #0f172a;
+  color: #94a3b8;
+  position: sticky;
+  top: 0;
+  z-index: 15;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 12px;
+  letter-spacing: 0.5px;
+}
+
+tr:nth-child(even) {
+  background: #0f172a;
+}
+
+tr:nth-child(odd) {
+  background: #020617;
+}
+
+tr:hover {
+  background: #1e293b;
+  transition: 0.1s;
+}
+
+/* Status color classes */
+.state-normal {
+  color: #22c55e;
+  font-weight: 600;
+}
+
+.state-warning {
+  color: #eab308;
+  font-weight: 600;
+}
+
+.state-overload {
+  color: #f97316;
+  font-weight: 600;
+}
+
+.state-danger {
+  color: #ef4444;
+  font-weight: 600;
+}
+
+/* Scrollbar */
+.table-wrap::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.table-wrap::-webkit-scrollbar-track {
+  background: #020617;
+  border-radius: 10px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 10px;
+}
+
+.table-wrap::-webkit-scrollbar-thumb:hover {
+  background: #3b82f6;
+}
+
+/* Empty state */
+.empty-row td {
+  text-align: center;
+  padding: 48px;
+  color: #64748b;
+  font-style: italic;
+}
+
+/* Toast notification */
+.toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #22c55e;
+  color: white;
+  padding: 12px 20px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 500;
+  z-index: 1000;
+  animation: slideIn 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dashboard {
+    padding: 12px;
+    width: 100%;
+  }
+  
+  .filter-section {
+    padding: 12px;
+  }
+  
+  .filter-row {
+    flex-direction: column;
+  }
+  
+  .filter-group {
+    width: 100%;
+  }
+  
+  .stats-bar {
+    flex-direction: column;
+    gap: 10px;
+    align-items: stretch;
+  }
+  
+  .stats-left, .stats-right {
+    justify-content: space-between;
+  }
+  
+  th, td {
+    padding: 8px 12px;
+  }
+}

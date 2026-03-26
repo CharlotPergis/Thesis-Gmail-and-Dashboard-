@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Breaker Monitoring Dashboard | Smart Mitigation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../static/style.css">
+</head>
+<body>
+
+<div class="bg-glow bg-glow--left"></div>
+<div class="bg-glow bg-glow--right"></div>
+
+<main class="dashboard">
+
+  <!-- HEADER with System Status integrated -->
+  <header class="dashboard-header card">
+    <div class="title-block">
+      <h1><span>BREAKER</span> MONITORING CENTER</h1>
+    </div>
+    <div class="header-actions">
+      <div class="system-status-header">
+        <span class="status-label">🖥️ System Status:</span>
+        <span id="system-status-header" class="status-value-header">Online</span>
+      </div>
+      <p class="live-chip">● Live monitoring</p>
+      <button id="refresh-btn" class="btn">⟳ Refresh Data</button>
+    </div>
+  </header>
+
+  <!-- 2x2 GRID - Larger Fonts -->
+  <section class="quad-grid">
+    <!-- Temperature Card -->
+    <article class="card compact-card">
+      <div class="card-header">
+        <p class="kpi__label">🌡️ Temperature</p>
+      </div>
+      <div class="card-body">
+        <div class="value-row">
+          <p class="kpi__value">
+            <span id="temperature-value">--</span> 
+            <span class="unit">°C</span>
+          </p>
+        </div>
+        <div class="graph-container">
+          <canvas id="tempGraph" width="300" height="50" class="line-graph"></canvas>
+        </div>
+        <p id="temperature-note" class="kpi__note">Waiting...</p>
+      </div>
+    </article>
+
+    <!-- Breaker State Card -->
+    <article class="card compact-card">
+      <div class="card-header">
+        <p class="kpi__label">🔌 Breaker State</p>
+      </div>
+      <div class="card-body">
+        <div class="value-row">
+          <p id="breaker-state" class="kpi__value state">Unknown</p>
+        </div>
+        <div class="breaker-status-indicator" id="breaker-indicator"></div>
+        <p id="state-note" class="kpi__note">Waiting...</p>
+      </div>
+    </article>
+
+    <!-- Current Card -->
+    <article class="card compact-card">
+      <div class="card-header">
+        <p class="kpi__label">⚡ Current</p>
+      </div>
+      <div class="card-body">
+        <div class="value-row">
+          <p class="kpi__value">
+            <span id="current-value">--</span>
+            <span class="unit">A</span>
+          </p>
+        </div>
+        <div class="graph-container">
+          <canvas id="currentGraph" width="300" height="50" class="line-graph"></canvas>
+        </div>
+        <p id="current-note" class="kpi__note">Waiting...</p>
+      </div>
+    </article>
+
+    <!-- Suggestion & Mitigation Card -->
+    <article class="card compact-card mitigation-compact" id="mitigationCard">
+      <div class="card-header">
+        <p class="kpi__label">🛡️ Suggestion & Mitigation</p>
+      </div>
+      <div class="card-body">
+        <div id="suggestion-main" class="suggestion-compact">
+          💡 Analyzing...
+        </div>
+        <div id="mitigation-action-box" class="mitigation-action-compact">
+          <span>🔧</span> 
+          <strong id="action-text">Standby</strong>
+        </div>
+        <div id="risk-badge-container" class="risk-badge-compact"></div>
+      </div>
+    </article>
+  </section>
+
+  <!-- HISTORY TABLE -->
+  <section class="history-row card">
+    <div class="history__header">
+      <h2>📋 History Logs</h2>
+      <a href="full_history.html" class="btn btn-small">📜 Full History</a>
+    </div>
+    <p class="history-subtext">Most recent events with timestamps</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Temp (°C)</th>
+            <th>Current (A)</th>
+            <th>Breaker State</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="log-body"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+
+
+<!-- Add this before closing </body> tag -->
+<div id="alert-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
+
+<script src="../static/dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Full History - Breaker Monitoring</title>
+  <link rel="stylesheet" href="../static/history.css" />
+</head>
+<body>
+
+<main class="dashboard card">
+
+  <!-- HEADER -->
+  <div class="history-header">
+    <div>
+      <h1>⚡ Breaker Monitoring Logs</h1>
+      <p class="subtext">Advanced filtering & historical analysis</p>
+    </div>
+    <a href="index.html" class="btn-back">← Dashboard</a>
+  </div>
+
+  <!-- ENHANCED FILTER SECTION -->
+  <div class="filter-section">
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>📅 Date Range Preset</label>
+        <select id="dateRangePreset">
+          <option value="custom">Custom Range</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="week">Last 7 Days</option>
+          <option value="month">Last 30 Days</option>
+          <option value="all">All Time</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>📅 Start Date</label>
+        <input type="date" id="startDate" autocomplete="off">
+      </div>
+      
+      <div class="filter-group">
+        <label>⏱️ Start Time</label>
+        <input type="time" id="startTime" autocomplete="off">
+      </div>
+      
+      <div class="filter-group">
+        <label>📅 End Date</label>
+        <input type="date" id="endDate" autocomplete="off">
+      </div>
+      
+      <div class="filter-group">
+        <label>⏱️ End Time</label>
+        <input type="time" id="endTime" autocomplete="off">
+      </div>
+    </div>
+    
+    <div class="filter-row">
+      <div class="filter-group">
+        <label>🔌 Breaker Status</label>
+        <select id="statusFilter">
+          <option value="all">All Statuses</option>
+          <option value="normal">✅ Normal</option>
+          <option value="warning">⚠️ Potential Overload</option>
+          <option value="overload">🔴 Overload</option>
+          <option value="danger">🔥 Overheating</option>
+        </select>
+      </div>
+      
+      <div class="filter-group">
+        <label>🔍 Search (State/Status/Temp/Current)</label>
+        <input type="text" id="searchInput" placeholder="e.g., Overload, 75°C, 20A..." autocomplete="off">
+      </div>
+      
+      <div class="filter-actions">
+        <button id="applyFiltersBtn" class="btn">🔍 Apply Filters</button>
+        <button id="clearFiltersBtn" class="btn-secondary">🗑️ Clear All</button>
+        <button id="downloadCsvBtn" class="btn-download">📥 Download CSV</button>
+      </div>
+    </div>
+    
+    <div class="quick-filters-enhanced">
+      <span class="badge">⚡ Quick Filters:</span>
+      <button id="quick1h" class="btn-secondary btn-small">Last Hour</button>
+      <button id="quick24h" class="btn-secondary btn-small">Last 24 Hours</button>
+      <button id="quick7d" class="btn-secondary btn-small">Last 7 Days</button>
+    </div>
+    
+    <div class="stats-bar">
+      <div class="stats-left">
+        <div class="stat-item">
+          <span>📋 Total Logs:</span>
+          <span class="stat-value" id="total-count">0</span>
+        </div>
+        <div class="stat-item">
+          <span>🎯 Filtered:</span>
+          <span class="stat-value" id="filtered-count">0</span>
+        </div>
+      </div>
+      <div class="stats-right">
+        <div class="stat-item">
+          <span>📊 Displaying:</span>
+          <span id="filterStats" style="color: #3b82f6; font-weight: 600;">0 logs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOG TABLE -->
+  <div class="table-wrap">
+     <table>
+      <thead>
+         <tr>
+          <th>Date & Time</th>
+          <th>🌡️ Temperature (°C)</th>
+          <th>⚡ Current (A)</th>
+          <th>🔌 Breaker State</th>
+          <th>📟 Status</th>
+         </tr>
+      </thead>
+      <tbody id="full-log-body"></tbody>
+     </table>
+  </div>
+
+</main>
+
+<script src="../static/full-history.js"></script>
+</body>
+</html>
