@@ -19,18 +19,19 @@ CORS(app)
 
 # Email config - REPLACE with your app password
 app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 465
-app.config['MAIL_USE_SSL'] = True
-app.config['MAIL_USERNAME'] = 'gwenlykapergis@gmail.com'
-app.config['MAIL_PASSWORD'] = 'ynpz mucn rscx haow'  # CHANGE THIS
+app.config['MAIL_PORT'] = 587  # Changed to 587 (better deliverability)
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'breaker.monitor.system@gmail.com'
+app.config['MAIL_PASSWORD'] = 'kzng lhzr elww gyyu'  # CHANGE THIS
+app.config['MAIL_DEFAULT_SENDER'] = 'breaker.monitor.system@gmail.com'
 
 try:
     mail = Mail(app)
-    print("✓ Email service initialized")
+    print("✓ Email service initialized with TLS on port 587")
 except Exception as e:
     print(f"✗ Email initialization error: {e}")
     mail = None
-
 # ----------------------
 # Load Models
 # ----------------------
@@ -72,9 +73,9 @@ def predict_risk(reading):
     if hotspot_model is None or overload_model is None:
         return {
             "hotspot_flag": int(reading.temperature_c > 75 or reading.current_a > 23),
-            "overload_flag": int(reading.temperature_c > 62 or reading.current_a > 17),
+            "overload_flag": int(reading.temperature_c > 48 or reading.current_a > 13),  # Changed to prevention thresholds
             "hotspot_prob": 0.5 if reading.temperature_c > 75 else 0.0,
-            "overload_prob": 0.5 if reading.current_a > 17 else 0.0
+            "overload_prob": 0.5 if reading.current_a > 13 else 0.0  # Changed to prevention thresholds
         }
     
     try:
@@ -106,11 +107,19 @@ def predict_risk(reading):
         }
 
 # ----------------------
-# Email Alert Function
+# ----------------------
+# Email Alert Function with BCC (Hidden Recipients)
 # ----------------------
 def send_breaker_alert(reading, risk, alert_type):
     if mail is None:
         return False, "Email service not configured"
+    
+    # Define multiple recipients (all will be hidden from each other)
+    bcc_recipients = [
+        'yuriolynx@gmail.com',      # Main recipient
+        'gwenlykapergis@gmail.com',   # Secondary recipient
+        # Add more emails here - all will be hidden from each other
+    ]
     
     if alert_type == "overheating":
         subject = "🔥 CRITICAL: Breaker Overheating Alert!"
@@ -133,13 +142,16 @@ Recommended Action:
 🚨 IMMEDIATE: Isolate circuit and investigate!
 
 Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-        """
-    elif alert_type == "overload":
-        subject = "⚠️ WARNING: Breaker Overload Detected!"
-        body = f"""
-⚠️ ACTION REQUIRED ⚠️
 
-BREAKER OVERLOAD DETECTED!
+---
+This is an automated alert from the Breaker Monitoring System.
+        """
+    elif alert_type == "prevention":
+        subject = "⚠️ PREVENTION: Potential Overload Detected!"
+        body = f"""
+⚠️ PREVENTIVE ACTION RECOMMENDED ⚠️
+
+POTENTIAL OVERLOAD DEVELOPING!
 
 Current Readings:
 • Temperature: {reading.temperature_c:.1f}°C
@@ -148,13 +160,16 @@ Current Readings:
 • Ambient Temp: {reading.ambient_temp_c:.1f}°C
 
 Risk Assessment:
-• Overload Probability: {risk['overload_prob']*100:.1f}%
-• Hotspot Probability: {risk['hotspot_prob']*100:.1f}%
+• Potential overload condition developing
+• Take preventive action now
 
 Recommended Action:
-⚙️ Reduce load immediately and investigate cause!
+🛡️ PROACTIVE: Reduce load by 15-20% to prevent critical condition!
 
 Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+---
+This is an automated alert from the Breaker Monitoring System.
         """
     else:
         subject = "⚠️ Breaker Alert: Combined Risk Detected!"
@@ -171,20 +186,41 @@ Risk Assessment:
 • Overload Probability: {risk['overload_prob']*100:.1f}%
 
 Time: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+
+---
+This is an automated alert from the Breaker Monitoring System.
         """
     
     try:
-        msg = Message(subject,
-                      sender=app.config['MAIL_USERNAME'],
-                      recipients=['pergishazel@gmail.com'])  # CHANGE to your email
+        # Create message with BCC only - recipients hidden from each other
+        msg = Message(
+            subject=subject,
+            sender=app.config['MAIL_USERNAME'],
+            recipients=[],                      # Empty visible recipients
+            bcc=bcc_recipients,                 # All recipients hidden
+            reply_to=app.config['MAIL_USERNAME']
+        )
         msg.body = body
+        
+        # Add additional headers to avoid spam
+        msg.extra_headers = {
+            'X-Priority': '1',
+            'X-MSMail-Priority': 'High',
+            'Importance': 'High',
+            'X-Mailer': 'Breaker Monitoring System v1.0'
+        }
+        
         mail.send(msg)
-        print(f"✓ Email sent: {subject}")
-        return True, "Alert sent successfully"
+        
+        # Log who received the email (without revealing to others)
+        print(f"✓ Email sent to {len(bcc_recipients)} recipients (BCC hidden): {subject}")
+        
+        return True, f"Alert sent to {len(bcc_recipients)} recipients (BCC)"
+        
     except Exception as e:
         print(f"✗ Email error: {e}")
         return False, f"Failed to send alert: {str(e)}"
-
+    
 # ----------------------
 # Alert Tracking
 # ----------------------
@@ -256,6 +292,7 @@ def check_alert():
         alert_sent = False
         alert_messages = []
         
+        # CRITICAL: Overheating
         if reading.temperature_c > 75 or reading.current_a > 23 or risk['hotspot_flag']:
             if should_send_alert("overheating"):
                 success, msg = send_breaker_alert(reading, risk, "overheating")
@@ -265,12 +302,13 @@ def check_alert():
                 else:
                     alert_messages.append(f"Failed: {msg}")
         
-        elif reading.temperature_c > 62 or reading.current_a > 17 or risk['overload_flag']:
-            if should_send_alert("overload"):
-                success, msg = send_breaker_alert(reading, risk, "overload")
+        # PREVENTION: Potential Overload (changed thresholds)
+        elif reading.temperature_c > 48 or reading.current_a > 13 or risk['overload_flag']:
+            if should_send_alert("prevention"):
+                success, msg = send_breaker_alert(reading, risk, "prevention")
                 if success:
                     alert_sent = True
-                    alert_messages.append("Overload alert sent")
+                    alert_messages.append("Prevention alert sent")
                 else:
                     alert_messages.append(f"Failed: {msg}")
         
@@ -302,7 +340,7 @@ def test_alert():
     risk = predict_risk(test_reading)
     
     if risk['hotspot_flag'] or risk['overload_flag']:
-        alert_type = "overheating" if risk['hotspot_flag'] else "overload"
+        alert_type = "overheating" if risk['hotspot_flag'] else "prevention"
         success, msg = send_breaker_alert(test_reading, risk, alert_type)
         if success:
             return f"Test alert sent successfully!\n\n{msg}"
