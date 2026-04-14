@@ -390,6 +390,9 @@ def debug_info():
 # ----------------------
 # Run App
 # ----------------------
+@app.route('/pwabuilder-sw.js')
+def serve_sw():
+    return app.send_static_file('pwabuilder-sw.js')
 if __name__ == "__main__":
     print("\n" + "="*50)
     print("Breaker Monitoring API Server")
