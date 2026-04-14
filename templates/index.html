@@ -134,5 +134,12 @@
 <div id="alert-toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 9999;"></div>
 
 <script src="../static/dashboard.js"></script>
+<script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/pwabuilder-sw.js');
+    });
+  }
+</script>
 </body>
 </html>
