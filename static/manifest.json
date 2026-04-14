@@ -2,6 +2,14 @@
   "name": "Breaker Monitor System",
   "short_name": "BMS_ver1",
   "start_url": "/",
+  {
+  "name": "Breaker Monitor System",
+  "short_name": "CirqSense",
+  "start_url": "/",
+  "scope": "/", 
+  "display": "standalone",
+  ...
+}
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
