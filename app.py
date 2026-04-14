@@ -118,7 +118,8 @@ def send_breaker_alert(reading, risk, alert_type):
     bcc_recipients = [
         'yuriolynx@gmail.com',      # Main recipient
         'gwenlykapergis@gmail.com',   # Secondary recipient
-        # Add more emails here - all will be hidden from each other
+         'janelledelasoledad@gmail.com',
+          'mercymicadespabiladeras@gmail.com',# Add more emails here - all will be hidden from each other
     ]
     
     if alert_type == "overheating":
